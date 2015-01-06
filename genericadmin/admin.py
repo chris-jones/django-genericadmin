@@ -103,7 +103,7 @@ class BaseGenericModelAdmin(object):
                 'popup_var': IS_POPUP_VAR,
             }
             resp = json.dumps(data, ensure_ascii=False)
-            return HttpResponse(resp, mimetype='application/json')
+            return HttpResponse(resp, content_type='application/json')
         return HttpResponseNotAllowed(['GET'])
 
     def generic_lookup(self, request):
