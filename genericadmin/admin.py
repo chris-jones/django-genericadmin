@@ -4,13 +4,9 @@ from functools import update_wrapper
 from django.contrib import admin
 from django.conf.urls import url
 from django.conf import settings
-try:
-    from django.contrib.contenttypes.generic import GenericForeignKey,  GenericTabularInline, GenericStackedInline
-except ImportError:
-    from django.contrib.contenttypes.admin import GenericStackedInline, GenericTabularInline
-    from django.contrib.contenttypes.fields import GenericForeignKey
-
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.admin import GenericStackedInline,GenericTabularInline
 try:
     from django.utils.encoding import force_text 
 except ImportError:
@@ -42,9 +38,6 @@ class BaseGenericModelAdmin(object):
             media = []
         media.append(JS_PATH + 'genericadmin.js')
         self.Media.js = tuple(media)
-        
-        self.content_type_whitelist = [s.lower() for s in self.content_type_whitelist]
-        self.content_type_blacklist = [s.lower() for s in self.content_type_blacklist]        
             
         super(BaseGenericModelAdmin, self).__init__(model, admin_site)
 
@@ -75,10 +68,9 @@ class BaseGenericModelAdmin(object):
                     
         if hasattr(self, 'inlines') and len(self.inlines) > 0:
             for FormSet, inline in zip(self.get_formsets(request), self.get_inline_instances(request)):
-                if hasattr(inline, 'get_generic_field_list'):
-                    prefix = FormSet.get_default_prefix()
-                    field_list = field_list + inline.get_generic_field_list(request, prefix)
-
+                prefix = FormSet.get_default_prefix()
+                field_list = field_list + inline.get_generic_field_list(request, prefix)
+        
         return field_list
 
     def get_urls(self):
@@ -112,7 +104,7 @@ class BaseGenericModelAdmin(object):
                 'popup_var': IS_POPUP_VAR,
             }
             resp = json.dumps(data, ensure_ascii=False)
-            return HttpResponse(resp, content_type='application/json')
+            return HttpResponse(resp, mimetype='application/json')
         return HttpResponseNotAllowed(['GET'])
     
     def generic_lookup(self, request):
@@ -140,7 +132,7 @@ class BaseGenericModelAdmin(object):
             resp = json.dumps(obj_dict, ensure_ascii=False)
         else:
             resp = ''
-        return HttpResponse(resp, content_type='application/json')
+        return HttpResponse(resp, mimetype='application/json')
         
 
 
