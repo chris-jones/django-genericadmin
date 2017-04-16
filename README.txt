@@ -6,9 +6,13 @@ A simple django app to make the lookup of generic models easier.
 Installation
 ------------
 
-To install add it to your ``INSTALLED_APPS`` setting. There is no need
-to run ``manage.py syncdb`` because *django-genericadmin* does not have
-any models.
+Run the usual
+
+```pip install django-genericadmin```
+
+and add it to your ``INSTALLED_APPS`` in your project’s ``settings.py``.
+There is no need to run ``manage.py migrate`` because *django-genericadmin*
+does not have any models.
 
 .. code:: python
 
@@ -18,19 +22,14 @@ any models.
        ...
     )
 
-If you are using the staticfiles app, then run
-``manage.py collectstatic`` and you should be good to go.
+Run ``manage.py collectstatic`` and you should be good to go.
 
-If you don't know what I'm talking about or your django version < 1.3,
-then you should link or copy ``genericadmin/media/js/`` to your asset
-directory and set ``GENERICADMIN_JS`` to a the relative destination of
-your just copied files.
 
 Usage
 -----
 
-To use *django-genericadmin* your model admin class must inherit from
-``GenericAdminModelAdmin``.
+To use *django-genericadmin*, your model admin class must inherit
+from ``GenericAdminModelAdmin``.
 
 So a model admin like
 
@@ -72,6 +71,7 @@ A short overview of the admin classes and their uses provided by
    relations in the admin. Also see the Django docs
    `here <https://docs.djangoproject.com/en/dev/ref/contrib/contenttypes/#generic-relations-in-forms-and-admin>`__.
 
+
 Inline Usage
 ------------
 
@@ -105,6 +105,7 @@ Additionally the inline classes must inherit from either
 Note that you can't mix and match. If you're going to use a generic
 inline, the class using it must inherit from ``GenericAdminModelAdmin``.
 
+
 Specifying which fields are handled
 -----------------------------------
 
@@ -132,6 +133,7 @@ If you use the ``ct_field`` and ``ct_fk_field`` attributes
 *django-genericadmin* will always just ignore those fields and not even
 try to use them.
 
+
 Blacklisting Content Types
 --------------------------
 
@@ -142,6 +144,7 @@ Example:
 
     class NavBarEntryAdmin(GenericAdminModelAdmin):
         content_type_blacklist = ('auth/group', 'auth/user', )
+
 
 Whitelisting Content Types
 --------------------------
@@ -157,6 +160,7 @@ list. Example:
 Note that this only happens on the client; there is no enforcement of
 the blacklist at the model level.
 
+
 Lookup parameters by Content Type
 ---------------------------------
 
@@ -167,6 +171,7 @@ limit\_choices\_to works with raw id fields. Example:
 
     class NavBarEntryAdmin(GenericAdminModelAdmin):
         content_type_lookups = {'app.model': {'field': 'value'}
+
 
 True Polymorphic Relationships
 ------------------------------
@@ -183,10 +188,13 @@ Here's an example of a polymorphic model:
 
 .. code:: python
 
+	from __future__ import unicode_literals
     from django.db import models
+	from django.utils.encoding import python_2_unicode_compatible
     from django.contrib.contenttypes.models import ContentType
     from django.contrib.contenttypes import generic
-        
+    
+    @python_2_unicode_compatible
     class RelatedContent(models.Model):
         """
         Relates any one entry to another entry irrespective of their individual models.
@@ -199,7 +207,7 @@ Here's an example of a polymorphic model:
         parent_object_id = models.PositiveIntegerField()
         parent_content_object = generic.GenericForeignKey('parent_content_type', 'parent_object_id')
 
-        def __unicode__(self):
+        def __str__(self):
             return "%s: %s" % (self.content_type.name, self.content_object)
 
 And here's how you'd set up your admin.py:
@@ -211,11 +219,11 @@ And here's how you'd set up your admin.py:
         
     class RelatedContentInline(GenericTabularInline):
         model = RelatedContent
-        ct_field = 'parent_content_type' # See below (1).
-        ct_fk_field = 'parent_object_id' # See below (1).
+        ct_field = 'parent_content_type'  # See below (1).
+        ct_fk_field = 'parent_object_id'  # See below (1).
             
-    class WhateverModelAdmin(GenericAdminModelAdmin): # Super important! See below (2).
-        content_type_whitelist = ('app/model', 'app2/model2' ) # Add white/black lists on this class
+    class WhateverModelAdmin(GenericAdminModelAdmin):  # Super important! See below (2).
+        content_type_whitelist = ('app/model', 'app2/model2' )  # Add white/black lists on this class
         inlines = [RelatedContentInline,]
 
 (1) By default ``ct_field`` and ``ct_fk_field`` will default to
