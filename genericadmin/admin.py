@@ -84,10 +84,6 @@ class BaseGenericModelAdmin(object):
                     prefix = FormSet.get_default_prefix()
                     field_list = field_list + inline.get_generic_field_list(request, prefix)
 
-            # for FormSet, inline in zip(self.get_formsets(request), self.get_inline_instances(request)):
-            #    prefix = FormSet.get_default_prefix()
-            #    field_list = field_list + inline.get_generic_field_list(request, prefix)
-
         return field_list
 
     def get_urls(self):
