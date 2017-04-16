@@ -4,13 +4,9 @@ from functools import update_wrapper
 from django.contrib import admin
 from django.conf.urls import url
 from django.conf import settings
-try:
-    from django.contrib.contenttypes.fields import GenericForeignKey, GenericTabularInline, GenericStackedInline
-except ImportError:
-    from django.contrib.contenttypes.admin import GenericStackedInline, GenericTabularInline
-    from django.contrib.contenttypes.fields import GenericForeignKey
-
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.admin import GenericStackedInline, GenericTabularInline
 try:
     from django.utils.encoding import force_text
 except ImportError:
@@ -44,8 +40,8 @@ class BaseGenericModelAdmin(object):
         media.append(JS_PATH + 'genericadmin.js')
         self.Media.js = tuple(media)
 
-        self.content_type_whitelist = [s.lower() for s in self.content_type_whitelist]
-        self.content_type_blacklist = [s.lower() for s in self.content_type_blacklist]
+        # self.content_type_whitelist = [s.lower() for s in self.content_type_whitelist]
+        # self.content_type_blacklist = [s.lower() for s in self.content_type_blacklist]
 
         super(BaseGenericModelAdmin, self).__init__(model, admin_site)
 
@@ -79,6 +75,10 @@ class BaseGenericModelAdmin(object):
                 if hasattr(inline, 'get_generic_field_list'):
                     prefix = FormSet.get_default_prefix()
                     field_list = field_list + inline.get_generic_field_list(request, prefix)
+
+            # for FormSet, inline in zip(self.get_formsets(request), self.get_inline_instances(request)):
+            #    prefix = FormSet.get_default_prefix()
+            #    field_list = field_list + inline.get_generic_field_list(request, prefix)
 
         return field_list
 
