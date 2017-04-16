@@ -93,14 +93,18 @@ class BaseGenericModelAdmin(object):
             return update_wrapper(wrapper, view)
 
         custom_urls = [
-            url(r'^(.*)genericadmin-obj-data/', wrap(
-                self.generic_lookup), name='admin_genericadmin_obj_lookup'),
-            url(r'^(.*)genericadmin-init/', wrap(
-                self.genericadmin_js_init), name='admin_genericadmin_init'),
-            url(r'^(\d+)/genericadmin-obj-data/$', wrap(
-                self.generic_lookup), name='admin_genericadmin_obj_lookup_change'),
-            url(r'^(\d+)/genericadmin-init/change/$', wrap(
-                self.genericadmin_js_init), name='admin_genericadmin_init_change'),
+            url(r'^(.*)genericadmin-obj-data/',
+                wrap(self.generic_lookup),
+                name='admin_genericadmin_obj_lookup'),
+            url(r'^(.*)genericadmin-init/',
+                wrap(self.genericadmin_js_init),
+                name='admin_genericadmin_init'),
+            url(r'^(\d+)/genericadmin-obj-data/$',
+                wrap(self.generic_lookup),
+                name='admin_genericadmin_obj_lookup_change'),
+            url(r'^(\d+)/genericadmin-init/change/$',
+                wrap(self.genericadmin_js_init),
+                name='admin_genericadmin_init_change'),
         ]
         return custom_urls + super(BaseGenericModelAdmin, self).get_urls()
 
@@ -109,7 +113,8 @@ class BaseGenericModelAdmin(object):
             obj_dict = {}
             for c in ContentType.objects.all():
                 val = force_text('%s/%s' % (c.app_label, c.model))
-                params = self.content_type_lookups.get('%s.%s' % (c.app_label, c.model), {})
+                params = self.content_type_lookups.get(
+                    '%s.%s' % (c.app_label, c.model), {})
                 params = url_params_from_lookup_dict(params)
 
                 try:

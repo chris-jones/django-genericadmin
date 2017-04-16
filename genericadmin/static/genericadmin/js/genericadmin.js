@@ -69,8 +69,8 @@
             for(var p in q) {
                 str.push(encodeURIComponent(p) + "=" + encodeURIComponent(q[p]));
             }
-            x = str.join("&");
-            url = x ? ("?" + x) : "";
+            var x = str.join("&");
+            var url = x ? ("?" + x) : "";
             return url;
         },
 
@@ -167,7 +167,7 @@
                 var value = that.object_input.val();
 
                 if (!value) {
-                    return
+                    return;
                 }
                 //var this_id = that.getFkId();
                 $('#lookup_text_' + that.getFkId() + ' span').text('loading...');
@@ -266,7 +266,7 @@
 			this.popup = popup_var || this.popup;
 
             for (var j = 0; j < inline_count; j++) {
-                f = $.extend({}, this.fields);
+                var f = $.extend({}, this.fields);
                 f.number = j;
                 admin = $.extend({}, GenericAdmin);
                 admin.install(f, this.url_array, popup_var);
@@ -287,7 +287,7 @@
                 $('#' + that.fields.prefix + '-' + added_fields.number + ' .inline-deletelink').click(
                     that.removeHandler(that)
                 );
-            }
+            };
         },
         removeHandler: function(that) {
             return function(e) {
@@ -306,7 +306,7 @@
                         sub_admin.fields.number = sub_admin.fields.number - 1;
                     }
                 }
-            }
+            };
         }
     };
 
