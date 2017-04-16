@@ -1,6 +1,7 @@
 import json
 from functools import update_wrapper
 
+from django.core.urlresolvers import reverse, NoReverseMatch
 from django.contrib import admin
 from django.conf.urls import url
 from django.conf import settings
@@ -40,8 +41,8 @@ class BaseGenericModelAdmin(object):
         media.append(JS_PATH + 'genericadmin.js')
         self.Media.js = tuple(media)
 
-        # self.content_type_whitelist = [s.lower() for s in self.content_type_whitelist]
-        # self.content_type_blacklist = [s.lower() for s in self.content_type_blacklist]
+        self.content_type_whitelist = [s.lower() for s in self.content_type_whitelist]
+        self.content_type_blacklist = [s.lower() for s in self.content_type_blacklist]
 
         super(BaseGenericModelAdmin, self).__init__(model, admin_site)
 
@@ -71,7 +72,14 @@ class BaseGenericModelAdmin(object):
                     })
 
         if hasattr(self, 'inlines') and len(self.inlines) > 0:
-            for FormSet, inline in self.get_formsets_with_inlines(request):
+            try:
+                # Django < 1.9
+                formsets = zip(self.get_formsets(request), self.get_inline_instances(request))
+            except (AttributeError, ):
+                # Django >= 1.9
+                formsets = self.get_formsets_with_inlines(request)
+
+            for FormSet, inline in formsets:
                 if hasattr(inline, 'get_generic_field_list'):
                     prefix = FormSet.get_default_prefix()
                     field_list = field_list + inline.get_generic_field_list(request, prefix)
@@ -89,10 +97,14 @@ class BaseGenericModelAdmin(object):
             return update_wrapper(wrapper, view)
 
         custom_urls = [
-            url(r'^obj-data/$', wrap(self.generic_lookup), name='admin_genericadmin_obj_lookup'),
-            url(r'^genericadmin-init/$', wrap(self.genericadmin_js_init), name='admin_genericadmin_init'),
-            url(r'^(\d+)/obj-data/$', wrap(self.generic_lookup), name='admin_genericadmin_obj_lookup_change'),
-            url(r'^(\d+)/genericadmin-init/change/$', wrap(self.genericadmin_js_init), name='admin_genericadmin_init_change'),
+            url(r'^(.*)genericadmin-obj-data/', wrap(
+                self.generic_lookup), name='admin_genericadmin_obj_lookup'),
+            url(r'^(.*)genericadmin-init/', wrap(
+                self.genericadmin_js_init), name='admin_genericadmin_init'),
+            url(r'^(\d+)/genericadmin-obj-data/$', wrap(
+                self.generic_lookup), name='admin_genericadmin_obj_lookup_change'),
+            url(r'^(\d+)/genericadmin-init/change/$', wrap(
+                self.genericadmin_js_init), name='admin_genericadmin_init_change'),
         ]
         return custom_urls + super(BaseGenericModelAdmin, self).get_urls()
 
@@ -103,11 +115,19 @@ class BaseGenericModelAdmin(object):
                 val = force_text('%s/%s' % (c.app_label, c.model))
                 params = self.content_type_lookups.get('%s.%s' % (c.app_label, c.model), {})
                 params = url_params_from_lookup_dict(params)
+
+                try:
+                    # Reverse the admin changelist url
+                    url = reverse('admin:%s_%s_changelist' % (
+                        c.app_label, c.model))
+                except (NoReverseMatch, ):
+                    continue
+
                 if self.content_type_whitelist:
                     if val in self.content_type_whitelist:
-                        obj_dict[c.id] = (val, params)
+                        obj_dict[c.id] = (val, url, params)
                 elif val not in self.content_type_blacklist:
-                    obj_dict[c.id] = (val, params)
+                    obj_dict[c.id] = (val, url, params)
 
             data = {
                 'url_array': obj_dict,
