@@ -16,7 +16,7 @@
         fields: null,
         obj_url: "../genericadmin-obj-data/",
         admin_media_url: window.__admin_media_prefix__,
-		popup: '_popup',
+        popup: '_popup',
 
         prepareSelect: function(select) {
             var that = this,
@@ -64,7 +64,7 @@
         },
 
         getLookupUrlParams: function(cID) {
-            var q = this.url_array[cID][2] || {},
+            var q = this.url_array[cID][1] || {},
                 str = [];
             for(var p in q) {
                 str.push(encodeURIComponent(p) + "=" + encodeURIComponent(q[p]));
@@ -74,10 +74,14 @@
             return url;
         },
 
-        getLookupUrl: function(cID, with_params) {
-            var url = this.url_array[cID][1];
-            if(with_params){url = url + this.getLookupUrlParams(cID);}
-            return url;
+        getLookupUrl: function(cID) {
+            var forword = '../../../';
+            var suffix = '/change/';
+            var href = window.location.href;
+            if (href.indexOf(suffix, href.length - suffix.length) !== -1) {
+                forword += '../';
+            }
+            return forword + this.url_array[cID][0] + '/' + this.getLookupUrlParams(cID);
         },
 
         getFkId: function() {
@@ -137,23 +141,23 @@
 
         popRelatedObjectLookup: function(link) {
             var name = id_to_windowname(this.getFkId()),
-				url_parts = [],
+                url_parts = [],
                 href,
                 win;
 
             if (link.href.search(/\?/) >= 0) {
-				url_parts[0] = '&';
+                url_parts[0] = '&';
                 //href = link.href + '&pop=1';
             } else {
-				url_parts[0] = '?';
+                url_parts[0] = '?';
                 //href = link.href + '?pop=1';
             }
-			url_parts[1] = this.popup;
-			url_parts[2] = '=1';
-			href = link.href + url_parts.join('');
+            url_parts[1] = this.popup;
+            url_parts[2] = '=1';
+            href = link.href + url_parts.join('');
 
-	    var left = window.screen.width / 2 - 400,
-	        top = window.screen.height / 2 - 250;
+        var left = window.screen.width / 2 - 400,
+            top = window.screen.height / 2 - 250;
             win = window.open(href, name, 'left='+left+',top='+top+',height=500,width=800,resizable=yes,scrollbars=yes');
 
             // wait for popup to be closed and load object data
@@ -213,7 +217,7 @@
 
             this.url_array = url_array;
             this.fields = fields;
-			this.popup = popup_var || this.popup;
+            this.popup = popup_var || this.popup;
 
             // store the base element
             this.object_input = $("#" + this.getFkId());
@@ -256,7 +260,7 @@
         sub_admins: null,
         url_array: null,
         fields: null,
-		popup: '_popup',
+        popup: '_popup',
 
         install: function(fields, url_array, popup_var) {
             var inline_count = $('#id_' + fields.prefix + '-TOTAL_FORMS').val(),
@@ -265,7 +269,7 @@
             this.url_array = url_array;
             this.fields = fields;
             this.sub_admins = [];
-			this.popup = popup_var || this.popup;
+            this.popup = popup_var || this.popup;
 
             for (var j = 0; j < inline_count; j++) {
                 var f = $.extend({}, this.fields);
@@ -313,13 +317,19 @@
     };
 
     $(document).ready(function() {
+        // fix wrong url
+        var url = './genericadmin-init/';
+        if (location.pathname.split('/').length > 5) {
+            url = '.' + url;
+        }
+
         $.ajax({
-            url: '../genericadmin-init/',
+            url: url,
             dataType: 'json',
             success: function(data) {
                 var url_array = data.url_array,
                     ct_fields = data.fields,
-					popup_var = data.popup_var,
+                    popup_var = data.popup_var,
                     fields;
 
                 for (var i = 0; i < ct_fields.length; i++) {

@@ -6,10 +6,11 @@ from django.contrib import admin
 from django.conf.urls import url
 from django.conf import settings
 try:
+    from django.contrib.contenttypes.generic import GenericForeignKey, \
+        GenericTabularInline, GenericStackedInline
+except ImportError:
     from django.contrib.contenttypes.admin import GenericStackedInline, GenericTabularInline
     from django.contrib.contenttypes.fields import GenericForeignKey
-except ImportError:
-    from django.contrib.contenttypes.generic import GenericForeignKey, GenericTabularInline, GenericStackedInline
 
 from django.contrib.contenttypes.models import ContentType
 try:
@@ -25,10 +26,12 @@ except ImportError:
     from django.contrib.admin.options import IS_POPUP_VAR
 from django.core.exceptions import ObjectDoesNotExist
 
+
 JS_PATH = getattr(settings, 'GENERICADMIN_JS', 'genericadmin/js/')
 
 
 class BaseGenericModelAdmin(object):
+
     class Media:
         js = ()
 
@@ -110,6 +113,7 @@ class BaseGenericModelAdmin(object):
                 wrap(self.genericadmin_js_init),
                 name='admin_genericadmin_init_change'),
         ]
+
         return custom_urls + super(BaseGenericModelAdmin, self).get_urls()
 
     def genericadmin_js_init(self, request, pk=None):
@@ -123,16 +127,16 @@ class BaseGenericModelAdmin(object):
 
                 try:
                     # Reverse the admin changelist url
-                    url = reverse('admin:%s_%s_changelist' % (
+                    uri = reverse('admin:%s_%s_changelist' % (
                         c.app_label, c.model))
                 except (NoReverseMatch, ):
                     continue
 
                 if self.content_type_whitelist:
                     if val in self.content_type_whitelist:
-                        obj_dict[c.id] = (val, url, params)
+                        obj_dict[c.id] = (val, uri, params)
                 elif val not in self.content_type_blacklist:
-                    obj_dict[c.id] = (val, url, params)
+                    obj_dict[c.id] = (val, params)
 
             data = {
                 'url_array': obj_dict,
