@@ -53,6 +53,7 @@ becomes
 
 That's it.
 
+
 Provided admin classes
 ----------------------
 
@@ -75,7 +76,7 @@ A short overview of the admin classes and their uses provided by
 Inline Usage
 ------------
 
-To use *django-genericadmin* with admin inlines, your models must
+To use *django-genericadmin* with admin inlines, your model admins must
 inherit from ``GenericAdminModelAdmin`` as described above:
 
 .. code:: python
