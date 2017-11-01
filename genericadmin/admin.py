@@ -5,9 +5,13 @@ from django.core.urlresolvers import reverse, NoReverseMatch
 from django.contrib import admin
 from django.conf.urls import url
 from django.conf import settings
-from django.contrib.contenttypes.fields import GenericForeignKey
+try:
+    from django.contrib.contenttypes.admin import GenericStackedInline, GenericTabularInline
+    from django.contrib.contenttypes.fields import GenericForeignKey
+except ImportError:
+    from django.contrib.contenttypes.generic import GenericForeignKey, GenericTabularInline, GenericStackedInline
+
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.admin import GenericStackedInline, GenericTabularInline
 try:
     from django.utils.encoding import force_text
 except ImportError:
@@ -36,7 +40,7 @@ class BaseGenericModelAdmin(object):
     def __init__(self, model, admin_site):
         try:
             media = list(self.Media.js)
-        except:
+        except Exception:
             media = []
         media.append(JS_PATH + 'genericadmin.js')
         self.Media.js = tuple(media)
