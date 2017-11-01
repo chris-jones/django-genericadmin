@@ -8,11 +8,11 @@ Installation
 
 Run the usual
 
-```pip install django-genericadmin```
+``pip install django-genericadmin``
 
 and add it to your ``INSTALLED_APPS`` in your project’s ``settings.py``.
-There is no need to run ``manage.py migrate`` because *django-genericadmin*
-does not have any models.
+There is no need to run ``manage.py syncdb`` or ``manage.py migrate``
+because *django-genericadmin* does not have any models.
 
 .. code:: python
 
@@ -211,7 +211,7 @@ Here's an example of a polymorphic model:
         def __str__(self):
             return "%s: %s" % (self.content_type.name, self.content_object)
 
-And here's how you'd set up your admin.py:
+And here’s how you’d set up your admin.py:
 
 .. code:: python
 
