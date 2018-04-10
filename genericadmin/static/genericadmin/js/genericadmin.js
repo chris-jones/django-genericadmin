@@ -80,7 +80,7 @@
             if (href.indexOf(suffix, href.length - suffix.length) !== -1) {
                 forword += '../';
             }
-            return forword + this.url_array[cID][0] + '/' + this.getLookupUrlParams(cID);
+            return forword + this.url_array[cID][0] + '/' //+ this.getLookupUrlParams(cID);
         },
 
         getFkId: function() {
@@ -117,7 +117,8 @@
                 // link = '<a class="related-lookup" id="' + id + '" href="' + url + '">&nbsp;</a>';
                 link = '<a class="related-lookup" id="' + id + '" href="' + url + '">';
 
-            link = link + '<strong id="lookup_text_'+ this.getFkId() +'" margin-left: 5px"><a class="search-label-icon" target="_new" href="#"></a><span></span></strong>';
+            link = link + '<span class="search-label-icon" style="cursor: pointer; margin-left: 5px; margin-right: 12px;" width="18" height="18" alt="Lookup"></span>';
+            link = link + '<strong id="lookup_text_'+ this.getFkId() +'" margin-left: 5px"><a target="_new" href="#"></a><span></span></strong>';
 
             // insert link html after input element
             this.object_input.after(link);
