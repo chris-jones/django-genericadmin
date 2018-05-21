@@ -14,16 +14,10 @@
     var GenericAdmin = {
         url_array: null,
         fields: null,
-<<<<<<< HEAD
-        obj_url: "../genericadmin-obj-data/",
-        popup: '_popup',
-
-=======
         obj_url: "../obj-data/",
         admin_media_url: window.__admin_media_prefix__,
 		popup: '_popup',
         
->>>>>>> b4916ea9421a484e893543bd1cbc6edc1c27fa66
         prepareSelect: function(select) {
             var that = this,
                 opt_keys = [],
@@ -70,11 +64,7 @@
         },
 
         getLookupUrlParams: function(cID) {
-<<<<<<< HEAD
-            var q = this.url_array[cID][1] || {},
-=======
             var q = this.url_array[cID][1] || {}, 
->>>>>>> b4916ea9421a484e893543bd1cbc6edc1c27fa66
                 str = [];
             for(var p in q) {
                 str.push(encodeURIComponent(p) + "=" + encodeURIComponent(q[p]));
@@ -83,7 +73,6 @@
             var url = x ? ("?" + x) : "";
             return url;
         },
-<<<<<<< HEAD
 
         getLookupUrl: function(cID) {
             var forword = '../../../';
@@ -93,11 +82,6 @@
                 forword += '../';
             }
             return forword + this.url_array[cID][0] + '/' //+ this.getLookupUrlParams(cID);
-=======
-        
-        getLookupUrl: function(cID) {
-            return '../../../' + this.url_array[cID][0] + '/' + this.getLookupUrlParams(cID);
->>>>>>> b4916ea9421a484e893543bd1cbc6edc1c27fa66
         },
         
         getFkId: function() {
@@ -131,15 +115,10 @@
             var that = this,
                 url = this.getLookupUrl(this.cID),
                 id = 'lookup_' + this.getFkId(),
-<<<<<<< HEAD
                 // link = '<a class="related-lookup" id="' + id + '" href="' + url + '">&nbsp;</a>';
                 link = '<a class="related-lookup" id="' + id + '" href="' + url + '">';
 
             link = link + '<span class="search-label-icon" style="cursor: pointer; margin-left: 5px; margin-right: 12px;" width="18" height="18" alt="Lookup"></span>';
-=======
-                link = '<a class="related-lookup" id="' + id + '" href="' + url + '">&nbsp;</a>';
-                
->>>>>>> b4916ea9421a484e893543bd1cbc6edc1c27fa66
             link = link + '<strong id="lookup_text_'+ this.getFkId() +'" margin-left: 5px"><a target="_new" href="#"></a><span></span></strong>';
 
             // insert link html after input element
@@ -162,13 +141,8 @@
         
         popRelatedObjectLookup: function(link) {
             var name = id_to_windowname(this.getFkId()),
-<<<<<<< HEAD
                 url_parts = [],
                 href,
-=======
-				url_parts = [],
-                href, 
->>>>>>> b4916ea9421a484e893543bd1cbc6edc1c27fa66
                 win;
 
             if (link.href.search(/\?/) >= 0) {
@@ -197,15 +171,9 @@
             var that = this;
             return function() {
                 var value = that.object_input.val();
-<<<<<<< HEAD
 
                 if (!value) {
                     return;
-=======
-                
-                if (!value) { 
-                    return 
->>>>>>> b4916ea9421a484e893543bd1cbc6edc1c27fa66
                 }
                 //var this_id = that.getFkId();
                 $('#lookup_text_' + that.getFkId() + ' span').text('loading...');
@@ -249,13 +217,8 @@
 
             this.url_array = url_array;
             this.fields = fields;
-<<<<<<< HEAD
             this.popup = popup_var || this.popup;
 
-=======
-			this.popup = popup_var || this.popup;
-            
->>>>>>> b4916ea9421a484e893543bd1cbc6edc1c27fa66
             // store the base element
             this.object_input = $("#" + this.getFkId());
             
@@ -297,13 +260,8 @@
         sub_admins: null,
         url_array: null,
         fields: null,
-<<<<<<< HEAD
         popup: '_popup',
 
-=======
-		popup: '_popup',
-        
->>>>>>> b4916ea9421a484e893543bd1cbc6edc1c27fa66
         install: function(fields, url_array, popup_var) {
             var inline_count = $('#id_' + fields.prefix + '-TOTAL_FORMS').val(),
                 admin;
@@ -311,13 +269,8 @@
             this.url_array = url_array;
             this.fields = fields;
             this.sub_admins = [];
-<<<<<<< HEAD
             this.popup = popup_var || this.popup;
 
-=======
-			this.popup = popup_var || this.popup;
-            
->>>>>>> b4916ea9421a484e893543bd1cbc6edc1c27fa66
             for (var j = 0; j < inline_count; j++) {
                 var f = $.extend({}, this.fields);
                 f.number = j;
