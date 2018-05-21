@@ -115,7 +115,6 @@ class BaseGenericModelAdmin(object):
 
 <<<<<<< HEAD
     def genericadmin_js_init(self, request, pk=None):
-=======
     def genericadmin_js_init(self, request):
 >>>>>>> b4916ea9421a484e893543bd1cbc6edc1c27fa66
         if request.method == 'GET':
