@@ -1,7 +1,6 @@
 import json
 from functools import update_wrapper
 
-from django.core.urlresolvers import reverse, NoReverseMatch
 from django.contrib import admin
 from django.conf.urls import url
 from django.conf import settings
@@ -79,14 +78,7 @@ class BaseGenericModelAdmin(object):
                     })
 
         if hasattr(self, 'inlines') and len(self.inlines) > 0:
-            try:
-                # Django < 1.9
-                formsets = zip(self.get_formsets(request), self.get_inline_instances(request))
-            except (AttributeError, ):
-                # Django >= 1.9
-                formsets = self.get_formsets_with_inlines(request)
-
-            for FormSet, inline in formsets:
+            for FormSet, inline in zip(self.get_formsets_with_inlines(request), self.get_inline_instances(request)):
                 if hasattr(inline, 'get_generic_field_list'):
                     prefix = FormSet.get_default_prefix()
                     field_list = field_list + inline.get_generic_field_list(request, prefix)
@@ -100,6 +92,7 @@ class BaseGenericModelAdmin(object):
             return update_wrapper(wrapper, view)
 
         custom_urls = [
+<<<<<<< HEAD
             url(r'^(.*)genericadmin-obj-data/',
                 wrap(self.generic_lookup),
                 name='admin_genericadmin_obj_lookup'),
@@ -112,11 +105,18 @@ class BaseGenericModelAdmin(object):
             url(r'^(\d+)/genericadmin-init/change/$',
                 wrap(self.genericadmin_js_init),
                 name='admin_genericadmin_init_change'),
+=======
+            url(r'^obj-data/$', wrap(self.generic_lookup), name='admin_genericadmin_obj_lookup'),
+            url(r'^genericadmin-init/$', wrap(self.genericadmin_js_init), name='admin_genericadmin_init'),
+>>>>>>> b4916ea9421a484e893543bd1cbc6edc1c27fa66
         ]
 
         return custom_urls + super(BaseGenericModelAdmin, self).get_urls()
 
+<<<<<<< HEAD
     def genericadmin_js_init(self, request, pk=None):
+    def genericadmin_js_init(self, request):
+>>>>>>> b4916ea9421a484e893543bd1cbc6edc1c27fa66
         if request.method == 'GET':
             obj_dict = {}
             for c in ContentType.objects.all():
@@ -124,6 +124,7 @@ class BaseGenericModelAdmin(object):
                 params = self.content_type_lookups.get(
                     '%s.%s' % (c.app_label, c.model), {})
                 params = url_params_from_lookup_dict(params)
+<<<<<<< HEAD
 
                 try:
                     # Reverse the admin changelist url
@@ -135,6 +136,11 @@ class BaseGenericModelAdmin(object):
                 if self.content_type_whitelist:
                     if val in self.content_type_whitelist:
                         obj_dict[c.id] = (val, uri, params)
+=======
+                if self.content_type_whitelist:
+                    if val in self.content_type_whitelist:
+                        obj_dict[c.id] = (val, params)
+>>>>>>> b4916ea9421a484e893543bd1cbc6edc1c27fa66
                 elif val not in self.content_type_blacklist:
                     obj_dict[c.id] = (val, params)
 
@@ -147,7 +153,11 @@ class BaseGenericModelAdmin(object):
             return HttpResponse(resp, content_type='application/json')
         return HttpResponseNotAllowed(['GET'])
 
+<<<<<<< HEAD
     def generic_lookup(self, request, pk=None):
+=======
+    def generic_lookup(self, request):
+>>>>>>> b4916ea9421a484e893543bd1cbc6edc1c27fa66
         if request.method != 'GET':
             return HttpResponseNotAllowed(['GET'])
 
